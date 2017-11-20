@@ -332,12 +332,10 @@ class BeautifulReport(ReportTestResult, PATH):
         self.log_path = None
         self.title = '自动化测试报告'
         self.filename = 'report.html'
-        self.test_path = None
     
-    def report(self, description, filename: str = None, log_path='.', test_path='tests'):
+    def report(self, description, filename: str = None, log_path='.'):
         """
             生成测试报告,并放在当前运行路径下
-        :param test_path:
         :param log_path: 生成report的文件存储路径
         :param filename: 生成文件的filename
         :param description: 生成文件的注释
@@ -350,7 +348,6 @@ class BeautifulReport(ReportTestResult, PATH):
             self.title = description
         
         self.log_path = os.path.abspath(log_path)
-        self.test_path = os.path.abspath(test_path)
         self.suites.run(result=self)
         self.stopTestRun(self.title)
         self.output_report()

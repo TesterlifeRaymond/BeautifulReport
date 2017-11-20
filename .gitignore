@@ -108,3 +108,5 @@ venv.bak/
 .gitignore
 .idea/
 tests/__pycache__/
+.DS_Store
+sample/report/

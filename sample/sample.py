@@ -7,10 +7,9 @@
 @License: MIT
 """
 import unittest
-
 import BeautifulReport
 
 if __name__ == '__main__':
-    test_suite = unittest.defaultTestLoader.discover('tests', pattern='test*.py')
+    test_suite = unittest.defaultTestLoader.discover('../tests', pattern='test*.py')
     result = BeautifulReport.BeautifulReport(test_suite)
-    result.report(description='测试deafult报告', log_path='sample/report', test_path='tests')
+    result.report(filename='测试报告', description='测试deafult报告', log_path='report')

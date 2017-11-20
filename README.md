@@ -27,12 +27,12 @@
 ```python
 
 import unittest
-import BeautifulReport
+from BeautifulReport import BeautifulReport
 
 if __name__ == '__main__':
-    test_suite = unittest.defaultTestLoader.discover('tests', pattern='test*.py')
-    result = BeautifulReport.BeautifulReport(test_suite)
-    result.report(description='测试deafult报告', log_path='sample/report')
+    test_suite = unittest.defaultTestLoader.discover('../tests', pattern='test*.py')
+    result = BeautifulReport(test_suite)
+    result.report(filename='测试报告', description='测试deafult报告', log_path='report')
 
 ```
 
@@ -52,4 +52,4 @@ if __name__ == '__main__':
 
 # 鸣谢:
 
-**_`[再见理想-飞哥](https://github.com/zhangfei19841004/ztest) 提供的HTML实现, 及Java数据展示的实现部分, 如果是Java同学请移步`_**
+[再见理想-飞哥](https://github.com/zhangfei19841004/ztest) 提供的HTML实现, 及Java数据展示的实现部分, 如果是Java同学请移步

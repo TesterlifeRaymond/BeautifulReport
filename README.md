@@ -19,7 +19,7 @@
 可以直接在sample路径直接运行
 
 ```shell
->>> python sample
+>>> python sample.py
 ``` 
 
 或

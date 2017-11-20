@@ -7,6 +7,7 @@
 @License: MIT
 """
 import unittest
+from BeautifulReport import BeautifulReport
 
 
 class UnittestCaseSecond(unittest.TestCase):
@@ -21,6 +22,7 @@ class UnittestCaseSecond(unittest.TestCase):
         time.sleep(1)
         self.assertTrue(1 == 1)
     
+    @BeautifulReport.add_test_img('测试报告.png')
     def test_is_none(self):
         """
             test None object
@@ -52,6 +54,7 @@ class UnittestTestCase(unittest.TestCase):
         print('这个测试将被跳过')
         self.assertTrue(1 != 1)
     
+    @BeautifulReport.add_test_img('测试报告.png', '测试报告.png')
     def test_is_none(self):
         """
             test None object
@@ -59,7 +62,7 @@ class UnittestTestCase(unittest.TestCase):
         """
         print('开始测试')
         print('这个测试是判断None != None')
-        self.assertIsNotNone(None)
+        self.assertIsNone(None)
     
     def test_isupper(self):
         """

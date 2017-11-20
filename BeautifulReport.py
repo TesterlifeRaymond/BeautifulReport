@@ -16,8 +16,16 @@ import unittest
 import platform
 from distutils.sysconfig import get_python_lib
 import traceback
+from functools import wraps
 
 __all__ = ['BeautifulReport']
+
+HTML_IMG_TEMPLATE = """
+    <a href="{}/{}">
+    <img src="file://{}/{}" width="800px" height="500px"/>
+    </a>
+    <br></br>
+"""
 
 
 class OutputRedirector(object):
@@ -326,6 +334,8 @@ class ReportTestResult(unittest.TestResult):
 
 
 class BeautifulReport(ReportTestResult, PATH):
+    img_path = 'img/'
+    
     def __init__(self, suites):
         super(BeautifulReport, self).__init__(suites)
         self.suites = suites
@@ -375,3 +385,24 @@ class BeautifulReport(ReportTestResult, PATH):
                     item = ''.join(item).encode()
                     item = bytes(item) + b';\n'
                 write_file.write(item)
+
+    def add_test_img(*pargs):
+        """
+            接受若干个图片元素, 并展示在测试报告中
+        :param pargs:
+        :return:
+        """
+        def _wrap(func):
+            @wraps(func)
+            def __wrap(*args, **kwargs):
+                result = func(*args, **kwargs)
+                img_path = os.path.abspath('../{}'.format(BeautifulReport.img_path))
+                print('<br></br>')
+                if len(pargs) > 1:
+                    for parg in pargs:
+                        print(HTML_IMG_TEMPLATE.format(*([img_path, parg] * 2)))
+                    return func(*args, **kwargs)
+                print(HTML_IMG_TEMPLATE.format(*([img_path, pargs[0]] * 2)))
+                return result
+            return __wrap
+        return _wrap

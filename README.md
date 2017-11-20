@@ -46,6 +46,10 @@ if __name__ == '__main__':
     )
 
 
+* 运行sample之后生成如下报告
+
+!['测试报告'](https://raw.githubusercontent.com/TesterlifeRaymond/BeautifulReport/master/img/%E6%B5%8B%E8%AF%95%E6%8A%A5%E5%91%8A.png)
+
 # 鸣谢:
 
 [再见理想-飞哥]('https://github.com/zhangfei19841004/ztest') 提供的HTML实现, 及Java数据展示的实现部分, 如果是Java同学请移步

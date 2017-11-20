@@ -7053,7 +7053,7 @@ body.skin-3 {
                 </div>
                 <div class="ibox-content">
                     <div class="input-group panel-heading" style="width: 100%; background-color: #1ab394; margin-bottom: 10px; text-align: left; font-family: Consolas;">
-                        <label style="color: snow">测试方法:</label>
+                        <label style="color: snow">测试类:</label>
                         <select class="chosen-select form-control" data-placeholder="----------" style="width: 300px;" name="filterClass" id="filterClass">
                             <option value="">----------</option>
                         </select>
@@ -7061,7 +7061,7 @@ body.skin-3 {
                         <select class="chosen-select form-control" data-placeholder="----------" style="width: 300px;" name="filterResult" id="filterResult">
                             <option value="">----------</option>
                         </select>
-                        <div style="width: 20%; float: right">
+                        <div style="float: right">
                             <label class="form-control">
                                 <span class="text-navy">用例数: </span><span class="text-navy b-r" id="filterAll">3</span><span> | </span>
                                 <span style="color: green">成功: </span><span style="color: green" id="filterOk">3</span><span> | </span>
@@ -7076,6 +7076,7 @@ body.skin-3 {
                             <th>编号</th>
                             <th>测试类</th>
                             <th>测试方法</th>
+                            <th>用例描述</th>
                             <th>运行时长</th>
                             <th>结果</th>
                             <th>操作</th>
@@ -7167,7 +7168,12 @@ body.skin-3 {
                     } else {
                         status = "<td><span>" + n["status"] + "</span></td>";
                     }
-                    var tr = "<tr style='font-family: Consolas'><td>" + (i + 1) + "</td><td>" + n["className"] + "</td><td>" + n["methodName"] + "</td><td>" + n["spendTime"] + "</td>" +
+                    var tr = "<tr style='font-family: Consolas'>" +
+                        "<td>" + (i + 1) + "</td>" +
+                        "<td>" + n["className"] + "</td>" +
+                        "<td>" + n["methodName"] + "</td>" +
+                        "<td>"+n["description"] + "</td>" +
+                        "<td>" + n["spendTime"] + "</td>" +
                         status + "<td><button type='button' onclick='details(this)' buttonIndex='" + i + "' class='btn btn-primary btn-xs' style='margin-bottom: 0px'>展开</button></td></tr>"
                     $("#detailBody").append(tr);
                 }

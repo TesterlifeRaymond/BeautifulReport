@@ -17,7 +17,7 @@ import platform
 from distutils.sysconfig import get_python_lib
 import traceback
 
-__all__ = ['BeautyReport']
+__all__ = ['BeautifulReport']
 
 
 class OutputRedirector(object):
@@ -57,7 +57,7 @@ FIELDS = {
 
 class PATH:
     """ all file PATH meta """
-    config_tmp_path = SITE_PAKAGE_PATH + '/UnittestReport/template/template'
+    config_tmp_path = SITE_PAKAGE_PATH + '/BeautifulReport/template/template'
 
 
 class MakeResultJson:

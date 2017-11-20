@@ -7,6 +7,6 @@
 @License: MIT
 """
 
-from . import BeautifulReport
+from .BeautifulReport import BeautifulReport
 
-__all__ = ['BeautifulReport.py']
+__all__ = ['BeautifulReport']

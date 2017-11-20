@@ -7054,9 +7054,21 @@ body.skin-3 {
                 <div class="ibox-content">
                     <div class="input-group panel-heading" style="width: 100%; background-color: #1ab394; margin-bottom: 10px; text-align: left; font-family: Consolas;">
                         <label style="color: snow">测试方法:</label>
-                        <select class="chosen-select" data-placeholder="----------" style="width: 300px;" name="filterClass" id="filterClass">
+                        <select class="chosen-select form-control" data-placeholder="----------" style="width: 300px;" name="filterClass" id="filterClass">
                             <option value="">----------</option>
                         </select>
+                        <label style="color: snow">结果:</label>
+                        <select class="chosen-select form-control" data-placeholder="----------" style="width: 300px;" name="filterResult" id="filterResult">
+                            <option value="">----------</option>
+                        </select>
+                        <div style="width: 20%; float: right">
+                            <label class="form-control">
+                                <span class="text-navy">用例数: </span><span class="text-navy b-r" id="filterAll">3</span><span> | </span>
+                                <span style="color: green">成功: </span><span style="color: green" id="filterOk">3</span><span> | </span>
+                                <span class="text-danger">失败: </span><span class="text-danger" id="filterFail">3</span><span> | </span>
+                                <span class="text-warning">跳过: </span><span class="text-warning" id="filterSkip">3</span>
+                            </label>
+                        </div>
                     </div>
                     <table class="table table-bordered">
                         <thead>
@@ -7083,7 +7095,7 @@ body.skin-3 {
 <script src="https://cdn.bootcss.com/echarts/3.8.5/echarts.min.js"></script>
 <script src="https://cdn.bootcss.com/chosen/1.8.2/chosen.jquery.js"></script>
 <script type="text/javascript">
-    var resultData = {"testPass": 3, "testResult": [{"className": "UnittestCaseSecond", "methodName": "test_equal", "description": "test 1==1\n        :return:", "spendTime": "1e+00 s", "status": "成功", "log": [""]}, {"className": "UnittestCaseSecond", "methodName": "test_is_none", "description": "test None object\n        :return:", "spendTime": "7e-05 s", "status": "成功", "log": ["111\n"]}, {"className": "UnittestCaseSecond", "methodName": "test_isupper", "description": "test isupper\n        :return:", "spendTime": "0.003 s", "status": "失败", "log": ["222\n", "Traceback (most recent call last):\n", "  File \"/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/unittest/case.py\", line 59, in testPartExecutor\n    yield\n", "  File \"/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/unittest/case.py\", line 605, in run\n    testMethod()\n", "  File \"/Users/sh-liujinjia/git/UnittestReport/tests/test_make_report.py\", line 38, in test_isupper\n    self.assertTrue('FOO'.isuper())\n", "AttributeError: 'str' object has no attribute 'isuper'\n"]}, {"className": "UnittestTestCase", "methodName": "test_equal", "description": "test 1==1\n        :return:", "spendTime": "2e-05 s", "status": "跳过", "log": ["Pass"]}, {"className": "UnittestTestCase", "methodName": "test_is_none", "description": "test None object\n        :return:", "spendTime": "0.0005 s", "status": "失败", "log": ["开始测试\n这个测试是判断None != None\n", "Traceback (most recent call last):\n", "  File \"/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/unittest/case.py\", line 59, in testPartExecutor\n    yield\n", "  File \"/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/unittest/case.py\", line 605, in run\n    testMethod()\n", "  File \"/Users/sh-liujinjia/git/UnittestReport/tests/test_make_report.py\", line 62, in test_is_none\n    self.assertIsNotNone(None)\n", "  File \"/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/unittest/case.py\", line 1238, in assertIsNotNone\n    self.fail(self._formatMessage(msg, standardMsg))\n", "  File \"/Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/unittest/case.py\", line 670, in fail\n    raise self.failureException(msg)\n", "AssertionError: unexpectedly None\n"]}, {"className": "UnittestTestCase", "methodName": "test_isupper", "description": "test isupper\n        :return:", "spendTime": "0.0001 s", "status": "成功", "log": ["开始测试\n这个测试是判断大小写是否正确\n"]}], "testName": "测试deafult报告", "testAll": 6, "testFail": 2, "beginTime": "2017-11-20 14:35:49", "totalTime": "1s", "testSkip": 1, "testError": 0};
+    var resultData = ${resultData};
     function details(obj) {
         if ($(obj).text() == '展开') {
             var len = $(obj).parent().parent().children().length;
@@ -7113,28 +7125,44 @@ body.skin-3 {
         $("#beginTime").text(resultData["beginTime"]);
         $("#totalTime").text(resultData["totalTime"]);
         var classNames = [];
+        var results = [];
         $.each(resultData["testResult"], function (i, n) {
             if(classNames.indexOf(n["className"])==-1){
                 classNames.push(n["className"]);
+            }
+            if(results.indexOf(n["status"])==-1){
+                results.push(n["status"]);
             }
         });
 
         $.each(classNames, function (i, n) {
             $("#filterClass").append("<option value='"+n+"' hassubinfo='true'>"+n+"</option>");
         });
+        $.each(results, function (i, n) {
+            $("#filterResult").append("<option value='"+n+"' hassubinfo='true'>"+n+"</option>");
+        });
 
-        $("#filterClass").chosen();
+        $("#filterClass").chosen({search_contains: true});
+        $("#filterResult").chosen({search_contains: true});
 
-        function generateResult(value) {
+        function generateResult(className, caseResult) {
             $("#detailBody").children().remove();
+            var filterAll = 0;
+            var filterOk = 0;
+            var filterFail = 0;
+            var filterSkip = 0;
             $.each(resultData["testResult"], function (i, n) {
-                if(value=="" || n["className"]==value){
+                if((className=="" || n["className"]==className) && (caseResult=="" || n["status"]==caseResult)){
+                    filterAll += 1;
                     var status = "";
                     if (n["status"] == '成功') {
+                        filterOk += 1;
                         status = "<td><span class='text-navy'>成功</span></td>";
                     } else if (n["status"] == '失败') {
+                        filterFail += 1;
                         status = "<td><span class='text-danger'>失败</span></td>";
                     } else if (n["status"] == '跳过') {
+                        filterSkip += 1;
                         status = "<td><span class='text-warning'>跳过</span></td>";
                     } else {
                         status = "<td><span>" + n["status"] + "</span></td>";
@@ -7144,13 +7172,24 @@ body.skin-3 {
                     $("#detailBody").append(tr);
                 }
             });
+            $("#filterAll").text(filterAll);
+            $("#filterOk").text(filterOk);
+            $("#filterFail").text(filterFail);
+            $("#filterSkip").text(filterSkip);
         }
 
-        generateResult("");
+        generateResult("", "");
 
         $("#filterClass").on('change', function () {
-            var selected = $("#filterClass").val();
-            generateResult(selected);
+            var className = $("#filterClass").val();
+            var caseResult = $("#filterResult").val();
+            generateResult(className, caseResult);
+        });
+
+        $("#filterResult").on('change', function () {
+            var className = $("#filterClass").val();
+            var caseResult = $("#filterResult").val();
+            generateResult(className, caseResult);
         });
 
         //$(".chosen-select").trigger("chosen:updated");

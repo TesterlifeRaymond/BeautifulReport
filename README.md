@@ -1,0 +1,2 @@
+# BeautifulReport
+适用于unittest自动化测试的可视化报告

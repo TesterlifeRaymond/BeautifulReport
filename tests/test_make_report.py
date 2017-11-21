@@ -6,70 +6,79 @@
 @File: test_make_report.py
 @License: MIT
 """
+import os
 import unittest
+from selenium import webdriver
+from lxml import etree
 from BeautifulReport import BeautifulReport
 
 
-class UnittestCaseSecond(unittest.TestCase):
-    """ 测试代码生成与loader 测试数据"""
+class UiAutoTestCase(unittest.TestCase):
+    """ 测试报告的基础用例Sample """
+    driver = None
+    img_path = 'img'
     
-    def test_equal(self):
+    @staticmethod
+    def parse(html, xpath):
         """
-            test 1==1
+            解析页面中的元素并返回一个对象
+        :param xpath: 需要获取页面中的元素对应的xpath
+        :param html: 页面的html元素
         :return:
         """
-        import time
-        time.sleep(1)
-        self.assertTrue(1 == 1)
+        return etree.HTML(html).xpath(xpath)
     
-    @BeautifulReport.add_test_img('测试报告.png')
-    def test_is_none(self):
+    def save_img(self, img_name):
         """
-            test None object
+            传入一个img_name, 并存储到默认的文件路径下
+        :param img_name:
         :return:
         """
-        print(111)
-        self.assertIsNone(None)
-    
-    def test_isupper(self):
-        """
-            test isupper
-        :return:
-        """
-        print(222)
-        self.assertTrue('FOO'.isuper())
-        self.assertFalse('Foo'.isupper())
+        self.driver.get_screenshot_as_file('{}/{}.png'.format(os.path.abspath(self.img_path), img_name))
 
+    @classmethod
+    def setUpClass(cls):
+        """ set Up method """
+        cls.driver = webdriver.Firefox()
+        cls.test_page = 'http://testerlife.com'
+    
+    def tearDown(self):
+        """ tear Down method """
+    
+    @classmethod
+    def tearDownClass(cls):
+        """ tear Down method """
+        cls.driver.close()
 
-class UnittestTestCase(unittest.TestCase):
-    """ 测试代码生成与loader 测试数据"""
-    
-    @unittest.skip('Pass')
-    def test_equal(self):
+    def test_home_page_is_ok(self):
         """
-            test 1==1
-        :return:
+        测试访问首页正常, 并使用title进行断言
         """
-        print('开始测试')
-        print('这个测试将被跳过')
-        self.assertTrue(1 != 1)
-    
-    @BeautifulReport.add_test_img('测试报告.png', '测试报告.png')
-    def test_is_none(self):
+        self.driver.get(self.test_page)
+        print('打开浏览器, 访问: {}'.format(self.test_page))
+        title = UiAutoTestCase.parse(self.driver.page_source, '//title/text()')[0]
+        print('获取到对应的title: {}'.format(title))
+        self.assertEqual(title, "Raymond's Blog")
+
+    @BeautifulReport.add_test_img('点击第一个文章页面前', '点击第一个文章页面后')
+    def test_save_img_and_view(self):
         """
-            test None object
-        :return:
+            打开首页, 截图, 在截图后点击第一篇文章连接, 跳转页面完成后再次截图
         """
-        print('开始测试')
-        print('这个测试是判断None != None')
-        self.assertIsNone(None)
-    
-    def test_isupper(self):
+        self.driver.get(self.test_page)
+        self.save_img('点击第一个文章页面前')
+        self.driver.find_element_by_xpath('/html/body/div[2]/div[2]/div/article[1]/div[2]/header/h1/a').click()
+        self.save_img('点击第一个文章页面后')
+        print('跳转与保存截图完成')
+        self.assertEqual(
+            self.parse(self.driver.page_source, '//*[@id="post-tester_4"]/div[2]/header/h1/text()')[0].strip(),
+            '测试人员,为什么要学习一门技术-(四)'
+        )
+
+    @BeautifulReport.add_test_img('test_errors_save_imgs')
+    def test_errors_save_imgs(self):
         """
-            test isupper
-        :return:
+            如果在测试过程中, 出现不确定的错误, 程序会自动截图, 并返回失败, 如果你需要程序自动截图, 则需要咋测试类中定义 save_img方法
         """
-        print('开始测试')
-        print('这个测试是判断大小写是否正确')
-        self.assertTrue('FOO'.isupper())
-        self.assertFalse('Foo'.isupper())
+        self.driver.get(self.test_page)
+        self.driver.find_element_by_xpath('//abc')

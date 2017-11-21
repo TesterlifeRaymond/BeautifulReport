@@ -14,6 +14,7 @@ import time
 import json
 import unittest
 import platform
+import base64
 from distutils.sysconfig import get_python_lib
 import traceback
 from functools import wraps
@@ -21,8 +22,8 @@ from functools import wraps
 __all__ = ['BeautifulReport']
 
 HTML_IMG_TEMPLATE = """
-    <a href="{}/{}">
-    <img src="file://{}/{}" width="800px" height="500px"/>
+    <a href="data:image/png;base64, {}">
+    <img src="data:image/png;base64, {}" width="800px" height="500px"/>
     </a>
     <br></br>
 """
@@ -171,7 +172,7 @@ class ReportTestResult(unittest.TestResult):
             当测试用力执行完成后进行调用
         :return:
         """
-        self.end_time = '{0:.1} s'.format((time.time() - self.start_time))
+        self.end_time = '{0:.3} s'.format((time.time() - self.start_time))
         self.result_list.append(self.get_all_result_info_tuple(test))
         self.complete_output()
     
@@ -329,7 +330,7 @@ class ReportTestResult(unittest.TestResult):
         """
         class_name = test.__class__.__qualname__
         method_name = test.__dict__['_testMethodName']
-        method_doc = test.__dict__['_testMethodDoc'].strip()
+        method_doc = test.__dict__['_testMethodDoc']
         return class_name, method_name, method_doc
 
 
@@ -342,7 +343,7 @@ class BeautifulReport(ReportTestResult, PATH):
         self.log_path = None
         self.title = '自动化测试报告'
         self.filename = 'report.html'
-    
+
     def report(self, description, filename: str = None, log_path='.'):
         """
             生成测试报告,并放在当前运行路径下
@@ -385,6 +386,18 @@ class BeautifulReport(ReportTestResult, PATH):
                     item = ''.join(item).encode()
                     item = bytes(item) + b';\n'
                 write_file.write(item)
+    
+    @staticmethod
+    def img2base(img_path: str, file_name: str) -> str:
+        """
+            接受传递进函数的filename 并找到文件转换为base64格式
+        :param img_path: 通过文件名及默认路径找到的img绝对路径
+        :param file_name: 用户在装饰器中传递进来的问价匿名
+        :return:
+        """
+        with open(img_path + '/' + file_name, 'rb') as file:
+            data = file.read()
+        return base64.b64encode(data).decode()
 
     def add_test_img(*pargs):
         """
@@ -392,17 +405,30 @@ class BeautifulReport(ReportTestResult, PATH):
         :param pargs:
         :return:
         """
+
         def _wrap(func):
             @wraps(func)
             def __wrap(*args, **kwargs):
-                result = func(*args, **kwargs)
-                img_path = os.path.abspath('../{}'.format(BeautifulReport.img_path))
+                img_path = os.path.abspath('{}'.format(BeautifulReport.img_path))
+                try:
+                    result = func(*args, **kwargs)
+                except Exception:
+                    if 'save_img' in dir(args[0]):
+                        save_img = getattr(args[0], 'save_img')
+                        print(save_img)
+                        save_img(func.__name__)
+                        data = BeautifulReport.img2base(img_path, pargs[0] + '.png')
+                        print(HTML_IMG_TEMPLATE.format(data, data))
+                    sys.exit(0)
                 print('<br></br>')
                 if len(pargs) > 1:
                     for parg in pargs:
-                        print(HTML_IMG_TEMPLATE.format(*([img_path, parg] * 2)))
-                    return func(*args, **kwargs)
-                print(HTML_IMG_TEMPLATE.format(*([img_path, pargs[0]] * 2)))
+                        print(parg + ':')
+                        data = BeautifulReport.img2base(img_path, parg + '.png')
+                        print(HTML_IMG_TEMPLATE.format(data, data))
+                    return result
+                data = BeautifulReport.img2base(img_path, pargs[0] + '.png')
+                print(HTML_IMG_TEMPLATE.format(data, data))
                 return result
             return __wrap
         return _wrap

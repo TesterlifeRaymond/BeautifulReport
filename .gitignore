@@ -110,3 +110,4 @@ venv.bak/
 tests/__pycache__/
 .DS_Store
 sample/report/
+geckodriver.log

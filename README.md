@@ -90,7 +90,7 @@ class UnittestCaseSecond(unittest.TestCase):
 
 * 运行sample之后生成如下报告
 
-!['测试报告'](https://raw.githubusercontent.com/TesterlifeRaymond/BeautifulReport/master/img/%E6%B5%8B%E8%AF%95%E6%8A%A5%E5%91%8A.png)
+![测试报告](https://raw.githubusercontent.com/TesterlifeRaymond/BeautifulReport/master/img/%E6%B5%8B%E8%AF%95%E6%8A%A5%E5%91%8A.png)
 
 # 鸣谢:
 

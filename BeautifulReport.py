@@ -244,7 +244,7 @@ class ReportTestResult(unittest.TestResult):
             sys.stderr.write('.')
         self.success_counter += 1
         self.status = '成功'
-        self.case_log = [output]
+        self.case_log = output.split('\n')
         self._mirrorOutput = True  # print(class_name, method_name, method_doc)
     
     def addError(self, test, err):
@@ -382,7 +382,7 @@ class BeautifulReport(ReportTestResult, PATH):
                 if item.strip().startswith(b'var resultData'):
                     head = '    var resultData = '
                     item = item.decode().split(head)
-                    item[1] = head + json.dumps(self.FIELDS, ensure_ascii=False)
+                    item[1] = head + json.dumps(self.FIELDS, ensure_ascii=False, indent=4)
                     item = ''.join(item).encode()
                     item = bytes(item) + b';\n'
                 write_file.write(item)
@@ -415,7 +415,6 @@ class BeautifulReport(ReportTestResult, PATH):
                 except Exception:
                     if 'save_img' in dir(args[0]):
                         save_img = getattr(args[0], 'save_img')
-                        print(save_img)
                         save_img(func.__name__)
                         data = BeautifulReport.img2base(img_path, pargs[0] + '.png')
                         print(HTML_IMG_TEMPLATE.format(data, data))

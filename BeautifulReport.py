@@ -335,7 +335,7 @@ class ReportTestResult(unittest.TestResult):
 
 
 class BeautifulReport(ReportTestResult, PATH):
-    img_path = 'img/'
+    img_path = 'img/' if platform.system() != 'Windows' else 'img\\'
     
     def __init__(self, suites):
         super(BeautifulReport, self).__init__(suites)
@@ -395,7 +395,8 @@ class BeautifulReport(ReportTestResult, PATH):
         :param file_name: 用户在装饰器中传递进来的问价匿名
         :return:
         """
-        with open(img_path + '/' + file_name, 'rb') as file:
+        pattern = '/' if platform != 'Windows' else '\\'
+        with open(img_path + pattern + file_name, 'rb') as file:
             data = file.read()
         return base64.b64encode(data).decode()
 

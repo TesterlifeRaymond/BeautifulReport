@@ -89,7 +89,7 @@ class MakeResultJson:
         """
         self[key] = value
     
-    def __makeresult__(self) -> dict:
+    def __repr__(self) -> str:
         """
             返回对象的html结构体
         :rtype: dict
@@ -105,7 +105,7 @@ class MakeResultJson:
         )
         for key, data in zip(keys, self.datas):
             self.result_schema.setdefault(key, data)
-        return self.result_schema
+        return json.dumps(self.result_schema)
 
 
 class ReportTestResult(unittest.TestResult):
@@ -196,7 +196,7 @@ class ReportTestResult(unittest.TestResult):
         """
         FIELDS['testPass'] = self.success_counter
         for item in self.result_list:
-            item = MakeResultJson(item).__makeresult__()
+            item = json.loads(str(MakeResultJson(item)))
             FIELDS.get('testResult').append(item)
         FIELDS['testAll'] = len(self.result_list)
         FIELDS['testName'] = title if title else self.default_report_name

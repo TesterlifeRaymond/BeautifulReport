@@ -396,6 +396,7 @@ class BeautifulReport(ReportTestResult, PATH):
         :return:
         """
         pattern = '/' if platform != 'Windows' else '\\'
+
         with open(img_path + pattern + file_name, 'rb') as file:
             data = file.read()
         return base64.b64encode(data).decode()
@@ -421,11 +422,14 @@ class BeautifulReport(ReportTestResult, PATH):
                         print(HTML_IMG_TEMPLATE.format(data, data))
                     sys.exit(0)
                 print('<br></br>')
+
                 if len(pargs) > 1:
                     for parg in pargs:
                         print(parg + ':')
                         data = BeautifulReport.img2base(img_path, parg + '.png')
                         print(HTML_IMG_TEMPLATE.format(data, data))
+                    return result
+                if not os.path.exists(img_path + pargs[0] + '.png'):
                     return result
                 data = BeautifulReport.img2base(img_path, pargs[0] + '.png')
                 print(HTML_IMG_TEMPLATE.format(data, data))

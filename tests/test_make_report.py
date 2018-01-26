@@ -82,3 +82,11 @@ class UiAutoTestCase(unittest.TestCase):
         """
         self.driver.get(self.test_page)
         self.driver.find_element_by_xpath('//abc')
+
+    @BeautifulReport.add_test_img('test_success_case_img')
+    def test_success_case_img(self):
+        """
+            如果case没有出现错误, 即使使用了错误截图装饰器, 也不会影响case的使用
+        """
+        self.driver.get(self.test_page)
+        self.driver.find_element_by_xpath('//title/text()')

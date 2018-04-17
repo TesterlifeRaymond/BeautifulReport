@@ -6946,6 +6946,13 @@ body.skin-3 {
 	color: #fff;
 	background-color: #1ab394
 }
+#detailBody{
+    width: 100%;
+    height: auto;
+    word-wrap:break-word;
+    word-break:break-all;
+    overflow: hidden;
+}
 
 @media (min-width:768px) {
 	.bs-glyphicons {

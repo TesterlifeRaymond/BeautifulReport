@@ -3202,7 +3202,8 @@ nav.page-tabs .page-tabs-content {
 }
 
 .table-bordered {
-	border: 1px solid #EBEBEB
+	border: 1px solid #EBEBEB;
+    white-space: pre-line;
 }
 
 .table-bordered>thead>tr>td,.table-bordered>thead>tr>th {

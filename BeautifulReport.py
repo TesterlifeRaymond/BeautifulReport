@@ -429,7 +429,7 @@ class BeautifulReport(ReportTestResult, PATH):
                         data = BeautifulReport.img2base(img_path, parg + '.png')
                         print(HTML_IMG_TEMPLATE.format(data, data))
                     return result
-                if not os.path.exists(img_path + pargs[0] + '.png'):
+                if not os.path.exists(img_path + '\\'  + pargs[0] + '.png'):
                     return result
                 data = BeautifulReport.img2base(img_path, pargs[0] + '.png')
                 print(HTML_IMG_TEMPLATE.format(data, data))

@@ -172,7 +172,8 @@ class ReportTestResult(unittest.TestResult):
             当测试用力执行完成后进行调用
         :return:
         """
-        self.end_time = '{0:.3} s'.format((time.time() - self.start_time))
+        test_time = time.time() - self.start_time
+        self.end_time = time.strftime("%H:%M:%S", time.gmtime(test_time))
         self.result_list.append(self.get_all_result_info_tuple(test))
         self.complete_output()
     
@@ -202,9 +203,11 @@ class ReportTestResult(unittest.TestResult):
         FIELDS['testName'] = title if title else self.default_report_name
         FIELDS['testFail'] = self.failure_count
         FIELDS['beginTime'] = self.begin_time
-        end_time = int(time.time())
-        start_time = int(time.mktime(time.strptime(self.begin_time, '%Y-%m-%d %H:%M:%S')))
-        FIELDS['totalTime'] = str(end_time - start_time) + 's'
+        end_time =time.time()
+        start_time = time.mktime(time.strptime(self.begin_time, '%Y-%m-%d %H:%M:%S'))
+        scend_time = end_time - start_time
+        all_time = time.strftime("%H:%M:%S", time.gmtime(scend_time))
+        FIELDS['totalTime'] = all_time
         FIELDS['testError'] = self.error_count
         FIELDS['testSkip'] = self.skipped
         self.FIELDS = FIELDS
